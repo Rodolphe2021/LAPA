@@ -1,42 +1,44 @@
-clearvars
-clearvars -GLOBAL
-close all
-format shortE
+set(0,'DefaultFigureWindowStyle','docked')
 
 BCL = 1; %voltage at the left side of the Boundary Condition
 BCR = 0; %voltage at the right side of the Boundary Condition
 %nx = randi([10 100],1);
 %ny = randi([10 100],1);
-nx =50;
-ny = 50;
+
+
+a = 1;
+b = 1;
+nx =100;
+ny = 100;
+
+ni = 10000;
+dx= a/nx;                    
+dy=b/ny;                     
+
+x=0:dx:a;                        
+y=0:dy:b;                        
+
 V = zeros(nx,ny);
-iterations = 100;
-for m = 1:nx
-    p = m;
-    V(p,1) = 1;
-    V(p,ny) = 1;
-end
-for step = 1:iterations
-surf(V);
-pause(0.01);
-for j = 1:ny
-    for d = 1:nx
-        i = d;
-        if j == 1
-            V(i,1) = 1;
-        elseif j == ny
-            V(i,ny) =1;
-        elseif i == 1 
-            V(1,j) =0;
-        elseif i == nx
-            V(nx,ny)=0;
-        else
-            va = V(i+1,j);
-            vb = V(i-1,j);
-            vc = V(i,j+1);
-            vd =V(i,j-1);
-            V(i,j) = average(4,va,vb,vc,vd);
-        end
+SidesToZero = 0;
+for k = 1:ni
+  for i = 1:ny+1
+      for j = 1:nx+1   
+           
+         V(i,j) =1/sin(x(j))./sin(a).*cosh(y(j))./cosh(b);
+       
+    
+      end
+
+   end
+    
+
+
+    if mod(k,50)== 0
+       surf(V);
+       pause(0.05);
     end
 end
-end
+
+[Ex,Ey] = gradient(V);
+figure
+quiver(-Ey',Ex')
